@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClawOps — Tu empleado de IA que trabaja mientras duermes</title>
+<meta name="description" content="Asistentes de IA autónomos para empresarios. Monitoreo 24/7, reportes, research, automatización. Servidor privado, tu data protegida.">
+<style>
+  :root {
+    --bg: #0a0a0a; --surface: #141414; --surface2: #1a1a1a;
+    --border: #2a2a2a; --text: #f0f0f0; --text2: #888;
+    --accent: #f47067; --accent2: #ff9b8e; --green: #3fb950;
+    --blue: #58a6ff; --purple: #bc8cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  
+  /* NAV */
+  nav { position: fixed; top: 0; width: 100%; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: rgba(10,10,10,0.9); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
+  nav .logo { font-size: 20px; font-weight: 700; }
+  nav .logo span { color: var(--accent); }
+  nav a.cta { background: var(--accent); color: #fff; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; }
+  nav a.cta:hover { background: var(--accent2); }
+
+  /* HERO */
+  .hero { padding: 140px 24px 80px; text-align: center; max-width: 800px; margin: 0 auto; }
+  .hero .badge { display: inline-block; background: rgba(244,112,103,0.1); color: var(--accent); border: 1px solid rgba(244,112,103,0.2); border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 500; margin-bottom: 24px; }
+  .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { font-size: 18px; color: var(--text2); max-width: 600px; margin: 0 auto 32px; }
+  .hero .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero .ctas a { padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 16px; text-decoration: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  /* STATS */
+  .stats { display: flex; justify-content: center; gap: 48px; padding: 40px 24px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat .num { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .stat .label { font-size: 14px; color: var(--text2); }
+
+  /* SECTIONS */
+  section { padding: 80px 24px; max-width: 1000px; margin: 0 auto; }
+  section h2 { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+  section .subtitle { font-size: 16px; color: var(--text2); margin-bottom: 40px; }
+
+  /* CASE STUDY */
+  .case-study { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 40px; }
+  .case-study h3 { font-size: 20px; margin-bottom: 16px; color: var(--accent); }
+  .timeline { list-style: none; }
+  .timeline li { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+  .timeline li:last-child { border: none; }
+  .timeline .time { font-size: 13px; color: var(--accent); font-weight: 600; min-width: 70px; }
+  .timeline .what { font-size: 14px; }
+  .timeline .tag { display: inline-block; background: rgba(63,185,80,0.1); color: var(--green); border-radius: 4px; padding: 2px 6px; font-size: 11px; margin-left: 6px; }
+
+  /* FEATURES GRID */
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .feature { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .feature .icon { font-size: 28px; margin-bottom: 12px; }
+  .feature h3 { font-size: 16px; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--text2); }
+
+  /* PRICING */
+  .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; position: relative; }
+  .price-card.popular { border-color: var(--accent); }
+  .price-card.popular::after { content: "MÁS POPULAR"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+  .price-card h3 { font-size: 20px; margin-bottom: 4px; }
+  .price-card .tier-desc { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+  .price-card .price { font-size: 32px; font-weight: 800; margin: 12px 0; }
+  .price-card .price span { font-size: 14px; color: var(--text2); font-weight: 400; }
+  .price-card ul { list-style: none; margin: 16px 0; }
+  .price-card li { padding: 6px 0; font-size: 14px; color: var(--text2); }
+  .price-card li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+  .price-card a { display: block; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 16px; }
+
+  /* SECURITY */
+  .security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .security-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .security-card .icon { font-size: 28px; margin-bottom: 12px; }
+  .security-card h3 { font-size: 16px; margin-bottom: 8px; }
+  .security-card p { font-size: 14px; color: var(--text2); }
+  .security-highlight { background: linear-gradient(135deg, rgba(244,112,103,0.05), rgba(188,140,255,0.05)); border: 1px solid rgba(244,112,103,0.2); border-radius: 16px; padding: 32px; margin-bottom: 24px; text-align: center; }
+  .security-highlight h3 { font-size: 20px; margin-bottom: 8px; }
+  .security-highlight p { color: var(--text2); font-size: 15px; }
+
+  /* COMPARE */
+  .compare { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .compare th { color: var(--text2); font-weight: 500; }
+  .compare td:first-child { font-weight: 600; }
+  .compare .check { color: var(--green); }
+  .compare .cross { color: #666; }
+
+  /* CTA */
+  .final-cta { text-align: center; padding: 80px 24px; }
+  .final-cta h2 { font-size: 36px; margin-bottom: 16px; }
+  .final-cta p { color: var(--text2); margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color: var(--text2); font-size: 13px; }
+
+  /* FORM */
+  .contact-form { max-width: 500px; margin: 0 auto; }
+  .contact-form input, .contact-form textarea, .contact-form select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 12px; font-family: inherit; }
+  .contact-form textarea { min-height: 100px; resize: vertical; }
+  .contact-form button { width: 100%; background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .contact-form button:hover { background: var(--accent2); }
+
+  @media (max-width: 600px) {
+    .stats { gap: 24px; }
+    .hero .ctas { flex-direction: column; align-items: center; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span>🦞</span> ClawOps</div>
+  <a href="https://wa.me/524433631087?text=Hola%2C%20me%20interesa%20saber%20más%20sobre%20ClawOps" class="cta">Escríbeme →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">🤖 Asistentes IA autónomos para empresarios</div>
+  <h1>Tu empleado de IA que <em>trabaja mientras duermes</em></h1>
+  <p>Configuro asistentes inteligentes que monitorean tu negocio, generan reportes, hacen research y ejecutan tareas — 24 horas al día, 7 días a la semana.</p>
+  <div class="ctas">
+    <a href="https://wa.me/524433631087?text=Hola%2C%20quiero%20saber%20más%20sobre%20mi%20asistente%20de%20IA" class="btn-primary">Quiero mi asistente →</a>
+    <a href="#caso" class="btn-secondary">Ver caso real</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">24/7</div><div class="label">Disponibilidad</div></div>
+  <div class="stat"><div class="num">14+</div><div class="label">Automatizaciones por cliente</div></div>
+  <div class="stat"><div class="num">10hrs</div><div class="label">Ahorro semanal promedio</div></div>
+  <div class="stat"><div class="num">$0</div><div class="label">Errores por cansancio</div></div>
+</div>
+
+<!-- CASO DE ESTUDIO -->
+<section id="caso">
+  <h2>Caso real: Una noche de trabajo</h2>
+  <p class="subtitle">Esto es lo que mi asistente construyó en una sola sesión nocturna mientras dormía.</p>
+  
+  <div class="case-study">
+    <h3>📅 19 de febrero, 2026 — Sesión nocturna</h3>
+    <ul class="timeline">
+      <li><span class="time">8:00 PM</span><div class="what">Construyó un tablero Kanban completo para gestión de tareas <span class="tag">Productividad</span></div></li>
+      <li><span class="time">8:15 PM</span><div class="what">Configuró 14 automatizaciones: briefs matutinos, accountability, research diario, code health</div></li>
+      <li><span class="time">8:30 PM</span><div class="what">Generó un cotizador solar con cálculo de ROI y exportación a WhatsApp <span class="tag">Ventas</span></div></li>
+      <li><span class="time">9:00 PM</span><div class="what">Escribió tests unitarios para 4 servicios backend (3,459 líneas de código)</div></li>
+      <li><span class="time">9:30 PM</span><div class="what">Documentó toda una API con Swagger/OpenAPI (29 archivos) <span class="tag">Código</span></div></li>
+      <li><span class="time">10:00 PM</span><div class="what">Creó sistema de check-in de prioridades y accountability nocturno</div></li>
+      <li><span class="time">11:00 PM</span><div class="what">Analizó oportunidades de negocio y preparó plan de go-to-market <span class="tag">Estrategia</span></div></li>
+    </ul>
+  </div>
+  <p style="text-align:center;color:var(--text2);font-size:14px;">Todo esto sin intervención humana. El dueño despertó con todo listo para revisar.</p>
+</section>
+
+<!-- QUÉ PUEDE HACER -->
+<section>
+  <h2>¿Qué puede hacer tu asistente?</h2>
+  <p class="subtitle">No es un chatbot. Es un empleado digital que ejecuta.</p>
+  
+  <div class="features">
+    <div class="feature">
+      <div class="icon">📊</div>
+      <h3>Brief matutino</h3>
+      <p>Cada mañana recibes un resumen de pendientes, métricas clave y prioridades del día.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔍</div>
+      <h3>Monitoring de competencia</h3>
+      <p>Trackea precios, productos, campañas y movimientos de tu competencia automáticamente.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📧</div>
+      <h3>Procesamiento de inbox</h3>
+      <p>Filtra correos urgentes, prepara drafts de respuesta y archiva lo irrelevante.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📚</div>
+      <h3>Research diario</h3>
+      <p>Investiga temas relevantes para tu industria y te entrega reportes accionables.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎯</div>
+      <h3>Follow-up de clientes</h3>
+      <p>Rastrea tu pipeline, te recuerda seguimientos y genera mensajes de contacto.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">💻</div>
+      <h3>Desarrollo de software</h3>
+      <p>Escribe código, tests, documentación. Crea branches para tu review.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📈</div>
+      <h3>Reportes automáticos</h3>
+      <p>Genera reportes semanales de KPIs, ventas, métricas y tendencias.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔔</div>
+      <h3>Alertas inteligentes</h3>
+      <p>Te notifica solo cuando algo requiere tu atención. Sin spam, sin ruido.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🧠</div>
+      <h3>Memoria persistente</h3>
+      <p>Recuerda contexto de tu negocio, preferencias, contactos y decisiones pasadas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SEGURIDAD -->
+<section id="seguridad">
+  <h2>Tu información está protegida</h2>
+  <p class="subtitle">Seguridad real, no solo palabras. Tu data nunca pasa por servidores compartidos.</p>
+
+  <div class="security-highlight">
+    <h3>🔒 Servidor privado dedicado</h3>
+    <p>Tu asistente corre en un servidor exclusivo. No compartimos infraestructura con nadie más. Tu información nunca sale de un entorno controlado.</p>
+  </div>
+
+  <div class="security-grid">
+    <div class="security-card">
+      <div class="icon">🏠</div>
+      <h3>Instancia aislada</h3>
+      <p>Cada cliente tiene su propio asistente con memoria y configuración completamente separada. Nadie más puede ver tu data.</p>
+    </div>
+    <div class="security-card">
+      <div class="icon">🔐</div>
+      <h3>Encriptación completa</h3>
+      <p>Disco encriptado en reposo (FileVault), conexiones encriptadas en tránsito (HTTPS/TLS). Tu información protegida en todo momento.</p>
+    </div>
+    <div class="security-card">
+      <div class="icon">🚫</div>
+      <h3>Sin cloud compartido</h3>
+      <p>Nada de AWS, Google Cloud ni servidores compartidos donde tu data convive con la de otros. Servidor físico dedicado.</p>
+    </div>
+    <div class="security-card">
+      <div class="icon">🗑️</div>
+      <h3>Borrado garantizado</h3>
+      <p>Si cancelas, toda tu información se elimina completamente del servidor. Sin copias, sin retención oculta.</p>
+    </div>
+    <div class="security-card">
+      <div class="icon">📋</div>
+      <h3>Acuerdo de confidencialidad</h3>
+      <p>Firmamos NDA antes de empezar. Tu información de negocio está protegida legalmente.</p>
+    </div>
+    <div class="security-card">
+      <div class="icon">💾</div>
+      <h3>Backups encriptados</h3>
+      <p>Respaldos automáticos encriptados para que nunca pierdas información, incluso ante fallas de hardware.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARACIÓN -->
+<section>
+  <h2>¿Por qué no simplemente contratar un VA?</h2>
+  <p class="subtitle">Comparación honesta</p>
+  
+  <table class="compare">
+    <tr>
+      <th></th>
+      <th>Asistente Virtual</th>
+      <th>Freelancer</th>
+      <th style="color:var(--accent)">🦞 ClawOps</th>
+    </tr>
+    <tr>
+      <td>Disponibilidad</td>
+      <td>8hrs/día, L-V</td>
+      <td>Variable</td>
+      <td class="check">24/7/365</td>
+    </tr>
+    <tr>
+      <td>Tiempo de respuesta</td>
+      <td>Minutos-horas</td>
+      <td>Horas-días</td>
+      <td class="check">Segundos</td>
+    </tr>
+    <tr>
+      <td>Errores por cansancio</td>
+      <td class="cross">Sí</td>
+      <td class="cross">Sí</td>
+      <td class="check">Nunca</td>
+    </tr>
+    <tr>
+      <td>Escala sin costo extra</td>
+      <td class="cross">No</td>
+      <td class="cross">No</td>
+      <td class="check">Sí</td>
+    </tr>
+    <tr>
+      <td>Código + análisis técnico</td>
+      <td class="cross">No</td>
+      <td>Parcial</td>
+      <td class="check">Sí</td>
+    </tr>
+    <tr>
+      <td>Tu data protegida</td>
+      <td class="cross">En su laptop</td>
+      <td class="cross">Quién sabe</td>
+      <td class="check">Servidor privado encriptado</td>
+    </tr>
+    <tr>
+      <td>Costo mensual</td>
+      <td>$8,000-$15,000</td>
+      <td>$10,000-$30,000</td>
+      <td style="color:var(--green);font-weight:700">Consultar</td>
+    </tr>
+  </table>
+</section>
+
+<!-- PAQUETES -->
+<section id="planes">
+  <h2>Paquetes</h2>
+  <p class="subtitle">Sin jerga técnica. Esto es lo que recibes.</p>
+  
+  <div class="pricing">
+    <div class="price-card">
+      <h3>Esencial</h3>
+      <p class="tier-desc">Para emprendedores y profesionistas</p>
+      <div class="price">Consultar</div>
+      <ul>
+        <li>Asistente en Telegram o WhatsApp</li>
+        <li>Brief diario con tus pendientes y prioridades</li>
+        <li>Recordatorios automáticos de tareas</li>
+        <li>Monitoreo de 1 área de tu negocio</li>
+        <li>Soporte por chat</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:12px;text-align:center;">Setup desde $15,000 MXN</p>
+      <a href="https://wa.me/524433631087?text=Hola%2C%20me%20interesa%20el%20plan%20Esencial" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Más información</a>
+    </div>
+    
+    <div class="price-card popular">
+      <h3>Profesional</h3>
+      <p class="tier-desc">Para negocios en crecimiento</p>
+      <div class="price">Consultar</div>
+      <ul>
+        <li>Todo lo Esencial</li>
+        <li>Research automático de industria y competencia</li>
+        <li>Follow-up automático de clientes</li>
+        <li>Reportes semanales de tu negocio</li>
+        <li>Integraciones con tus herramientas</li>
+        <li>Nuevas capacidades cada mes</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:12px;text-align:center;">Setup desde $30,000 MXN</p>
+      <a href="https://wa.me/524433631087?text=Hola%2C%20me%20interesa%20el%20plan%20Profesional" style="background:var(--accent);color:#fff">Agendar demo</a>
+    </div>
+    
+    <div class="price-card">
+      <h3>A la medida</h3>
+      <p class="tier-desc">Para equipos y necesidades específicas</p>
+      <div class="price">Cotización</div>
+      <ul>
+        <li>Todo lo Profesional</li>
+        <li>Desarrollo custom para tu negocio</li>
+        <li>Múltiples usuarios</li>
+        <li>Training a tu equipo</li>
+        <li>Soporte prioritario 24/7</li>
+        <li>Automatizaciones ilimitadas</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:12px;text-align:center;">Setup: según proyecto</p>
+      <a href="https://wa.me/524433631087?text=Hola%2C%20me%20interesa%20el%20plan%20A%20la%20medida" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Contactar</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="contacto" class="final-cta">
+  <h2>¿Listo para tu empleado de IA?</h2>
+  <p>Agenda una demo de 15 minutos. Te muestro en vivo lo que tu asistente puede hacer por tu negocio.</p>
+  
+  <a href="https://wa.me/524433631087?text=Hola%2C%20me%20interesa%20saber%20más%20sobre%20ClawOps" class="btn-primary" style="display:inline-block;padding:18px 40px;font-size:18px;border-radius:12px;text-decoration:none;">💬 Escríbeme por WhatsApp →</a>
+</section>
+
+<footer>
+  <p>🦞 ClawOps — Asistentes IA autónomos para empresarios en México</p>
+  <p style="margin-top:8px">Servidor privado · Data encriptada · Instancias aisladas</p>
+  <p style="margin-top:4px;font-size:12px;">Morelia, Michoacán</p>
+</footer>
+
+</body>
+</html>
